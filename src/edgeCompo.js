@@ -1,12 +1,8 @@
-import React, { Component,View } from 'react';
-import { Select } from 'antd';
-import logo from './logo.svg';
+import React from 'react';
 import 'antd/dist/antd.css';
 //import Combobox from 'react-widgets'
-import {Combobox} from 'react-widgets';
 import { Input } from 'antd';
-import { InputNumber } from 'antd';
-import { Upload, message, Button, Icon } from 'antd';
+import { Button, Icon } from 'antd';
 import Graph from "react-graph-vis";
 import randomColor from "randomcolor"
 
@@ -36,7 +32,6 @@ export default class EdgeComponent extends React.Component {
       )
     })
     this.state.edge.map((oneEdge, idx)=> {
-      var start = oneEdge;
       var arr = oneEdge.name.split(",");
       edgeArray.push(
         {key:idx, from: arr[0], to: arr[1], label: "Guard: "+this.state.guard[idx].name+"\n"+"Reset: "+this.state.reset[idx].name}
@@ -66,7 +61,7 @@ export default class EdgeComponent extends React.Component {
   createevents(){
     var events = {
         select: function(event) {
-            var { nodes, edges } = event;
+            //var { nodes, edges } = event;
         }
     }
     return events

@@ -1,12 +1,8 @@
-import React, { Component,View } from 'react';
-import { Select } from 'antd';
-import logo from './logo.svg';
+import React from 'react';
 import 'antd/dist/antd.css';
 //import Combobox from 'react-widgets'
-import {Combobox} from 'react-widgets';
 import { Input } from 'antd';
-import { InputNumber } from 'antd';
-import { Upload, message, Button, Icon } from 'antd';
+import { Button, Icon } from 'antd';
 
 export default class VariableComponent extends React.Component {
   constructor(props) {

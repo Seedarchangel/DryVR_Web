@@ -1,11 +1,7 @@
-import React, { Component } from 'react';
-import { Select } from 'antd';
 import 'antd/dist/antd.css';
-//import Combobox from 'react-widgets'
-import { Input } from 'antd';
-import { InputNumber } from 'antd';
-import { Upload, message, Button, Icon } from 'antd';
 import EdgeComponent from "./edgeCompo"
+import React, { Component } from 'react';
+import {Upload, message, Button, Icon, Input, InputNumber, Select } from 'antd';
 import VariableComponent from "./varCompo"
 
 class App extends Component {

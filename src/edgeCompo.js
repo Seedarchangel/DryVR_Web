@@ -1,10 +1,9 @@
-import React from 'react';
 import 'antd/dist/antd.css';
-//import Combobox from 'react-widgets'
-import { Input } from 'antd';
-import { Button, Icon } from 'antd';
+import { Button, Icon ,Input} from 'antd';
 import Graph from "react-graph-vis";
 import randomColor from "randomcolor"
+import React from 'react';
+
 
 
 export default class EdgeComponent extends React.Component {

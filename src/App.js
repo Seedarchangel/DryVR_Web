@@ -7,6 +7,7 @@ import { InputNumber } from 'antd';
 import { Upload, message, Button, Icon } from 'antd';
 import EdgeComponent from "./edgeCompo"
 import VariableComponent from "./varCompo"
+import Verify from "./verify"
 
 class App extends Component {
 
@@ -92,6 +93,7 @@ class App extends Component {
     </Button>
   </Upload>
 </div>
+      <Verify />
       </div>
     );
   }

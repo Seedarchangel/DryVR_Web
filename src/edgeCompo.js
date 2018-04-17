@@ -37,10 +37,10 @@ export default class EdgeComponent extends React.Component {
       )
     })
     var graph = {
-    nodes: nodeArray,
-    edges: edgeArray
-  };
-  return graph
+      nodes: nodeArray,
+      edges: edgeArray
+    };
+    return graph
   }
 
   createoptions(){
@@ -68,7 +68,7 @@ export default class EdgeComponent extends React.Component {
 
   handleVertexNameChange = (idx) => (evt) => {
     const newShareholders = this.state.vertex.map((shareholder, sidx) => {
-      if (idx !== sidx) return shareholder;
+    if (idx !== sidx) return shareholder;
       return { ...shareholder, name: evt.target.value };
     });
     this.setState({ vertex: newShareholders });

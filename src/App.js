@@ -3,6 +3,7 @@ import EdgeComponent from "./edgeCompo"
 import React, { Component } from 'react';
 import {Upload, message, Button, Icon, Input, InputNumber, Select } from 'antd';
 import VariableComponent from "./varCompo"
+import Verify from "./verify"
 
 class App extends Component {
 
@@ -88,6 +89,7 @@ class App extends Component {
     </Button>
   </Upload>
 </div>
+      <Verify />
       </div>
     );
   }

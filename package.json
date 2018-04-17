@@ -4,6 +4,9 @@
   "private": true,
   "dependencies": {
     "antd": "^3.3.3",
+    "axios": "^0.18.0",
+    "cors": "^2.8.4",
+    "express": "^4.16.3",
     "plotly.js": "^1.35.2",
     "randomcolor": "^0.5.3",
     "react": "^16.2.0",
@@ -11,8 +14,10 @@
     "react-graph-vis": "^1.0.2",
     "react-plotly.js": "^2.1.0",
     "react-scripts": "1.1.1",
-    "react-widgets": "^4.2.6"
+    "react-widgets": "^4.2.6",
+    "socket.io": "^2.1.0"
   },
+  "proxy": "http://localhost:8080",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",

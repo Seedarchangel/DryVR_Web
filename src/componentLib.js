@@ -1,17 +1,17 @@
 import 'antd/dist/antd.css';
-import { message, Upload, Button, Icon ,Input, InputNumber} from 'antd';
+import { message, Upload, Button, Icon ,Input, InputNumber, Select} from 'antd';
 import Graph from "react-graph-vis";
 import randomColor from "randomcolor"
 import React from 'react';
-
-
+import File from 'file-saver';
 
 export class EdgeComponent extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+            bloating: 'Global',
+            determinism: 'Deterministic',
             name: '',
-            content: '',
             vertex: [{ name: ''}],
             edge: [{ name: '' }],
             guard: [{ name: '' }],
@@ -22,6 +22,7 @@ export class EdgeComponent extends React.Component {
     this.creategraph = this.creategraph.bind(this)
     this.createoptions = this.createoptions.bind(this)
     this.createevents = this.createevents.bind(this)
+    saveFile = saveFile.bind(this)
   }
 
   creategraph(){
@@ -135,12 +136,52 @@ export class EdgeComponent extends React.Component {
     });
   }
 
+  handleChangeDeterminism = (val) => () => {
+      console.log(val)
+      this.setState({
+          determinism: val
+      })
+  }
+
+    handleChangeBloating = (val) => () => {
+    console.log(val)
+      this.setState({
+          bloating: val
+      })
+  }
+
   render() {
     return (
       <div>
         {/* ... */}
               <div>
         {/* ... */}
+        <Select
+            showSearch
+            style={{ width: 200 }}
+            placeholder="Select a Method"
+            optionFilterProp="children"
+            defaultValue="Global"
+            filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+            onChange = {this.handleChangeBloating}
+                        >
+            <Select.Option value="Global">Global</Select.Option>
+            <Select.Option value="PW">PW</Select.Option>
+        </Select>
+        <label> Determinism </label>
+        <Select
+            showSearch
+            style={{ width: 200 }}
+            placeholder="Select a Method"
+            optionFilterProp="children"
+            defaultValue="Deterministic"
+            filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+            onChange = {this.handleChangeDeterminism}
+        >
+        <Select.Option value="Deterministic">Deterministic</Select.Option>
+        <Select.Option value="Non-Deterministic">Non-Deterministic</Select.Option>
+        </Select>
+        <br/>
         <label>Vertex: </label>
         <Button type="button" onClick={this.handleAddVertex} className="small">
         Add Vertex
@@ -236,7 +277,9 @@ export class VariableComponent extends React.Component {
       unsafe: '',
       time: '',
     };
+    getVariableState = getVariableState.bind(this)
     updateVariableCompo = updateVariableCompo.bind(this)
+    saveFile = saveFile.bind(this)
   }
 
 
@@ -474,6 +517,9 @@ export class UploadJson extends React.Component {
         return(
             <div>
             <label>Json Upload</label>
+            {"   "}
+            <DownloadJson></DownloadJson>
+            {"     "}
             <br/>
             <Upload {...props}>
                 <Button
@@ -489,6 +535,47 @@ export class UploadJson extends React.Component {
     }
 }
 
+function getVariableState(){
+    return this.state
+}
+
+function saveFile(){
+    var edge = this.state
+    var variable = getVariableState()
+    //console.log(typeof(variable))
+    var json = Object.assign({},edge, variable);
+    var json = JSON.stringify(json, null, 5)
+    var blob = new Blob([json], {type: "text/plain;charset=utf-8"});
+    File.saveAs(blob, "data.json");
+}
+
+export class DownloadJson extends React.Component {
+    constructor(props) {
+    super(props);
+    this.state = {
+      bloatingMethod: '',
+      Determinism: '',
+      vertex: [{ name: '' }],
+      edge: [{name: ''}],
+      guard: [{name: ''}],
+      reset: [{name: ''}],
+      variable: [{name: ''}],
+      initialLeft: [{name: ''}],
+      initialRight: [{name: ''}],
+      unsafe: '',
+      time: '',
+    };
+    
+  }
+  render()
+  { 
+      return (
+      <Button type="primary" icon="download" size={'small'} onClick={saveFile}>Save Input</Button>
+      )
+  }
+
+  
+}
 
 export class uploadPython extends React.Component {
     render()

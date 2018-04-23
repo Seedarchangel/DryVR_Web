@@ -9,13 +9,12 @@ export class EdgeComponent extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-            bloating: 'Global',
+            bloatingMethod: 'Global',
             determinism: 'Deterministic',
-            name: '',
             vertex: [{ name: ''}],
             edge: [{ name: '' }],
-            guard: [{ name: '' }],
-            reset: [{ name: '' }]
+            guards: [{ name: '' }],
+            reset: [{ name: '' }],
 
     };
     updateEdgeCompo = updateEdgeCompo.bind(this) //TODO: for future updating information
@@ -38,7 +37,7 @@ export class EdgeComponent extends React.Component {
       {
         var arr = oneEdge.name.split(",");
         edgeArray.push(
-            {key:idx, from: arr[0], to: arr[1], minlen: "10", fontsize: 5, label: "Guard: "+this.state.guard[idx].name+"\n"+"Reset: "+this.state.reset[idx].name}
+            {key:idx, from: arr[0], to: arr[1], minlen: "10", fontsize: 5, label: "Guard: "+this.state.guards[idx].name+"\n"+"Reset: "+this.state.reset[idx].name}
         )
       }
     })
@@ -91,12 +90,12 @@ export class EdgeComponent extends React.Component {
   }
 
   handleGuardNameChange = (idx) => (evt) => {
-    const newShareholders = this.state.guard.map((shareholder, sidx) => {
+    const newShareholders = this.state.guards.map((shareholder, sidx) => {
       if (idx !== sidx) return shareholder;
       return { ...shareholder, name: evt.target.value };
     });
 
-    this.setState({ guard: newShareholders });
+    this.setState({ guards: newShareholders });
   }
 
   handleResetNameChange = (idx) => (evt) => {
@@ -111,7 +110,7 @@ export class EdgeComponent extends React.Component {
   handleAddEdge = () => {
     this.setState({
       edge: this.state.edge.concat([{ name: '' }]),
-      guard: this.state.guard.concat([{ name: '' }]),
+      guards: this.state.guard.concat([{ name: '' }]),
       reset: this.state.reset.concat([{ name: '' }])
     });
   }
@@ -125,7 +124,7 @@ export class EdgeComponent extends React.Component {
   handleRemoveEdge = (idx) => () => {
     this.setState({
       edge: this.state.edge.filter((s, sidx) => idx !== sidx),
-      guard: this.state.guard.filter((s, sidx) => idx !== sidx),
+      guards: this.state.guard.filter((s, sidx) => idx !== sidx),
       reset: this.state.reset.filter((s, sidx) => idx !== sidx),
     });
   }
@@ -137,16 +136,16 @@ export class EdgeComponent extends React.Component {
   }
 
   handleChangeDeterminism = (val) => () => {
-      console.log(val)
+      //console.log(val)
       this.setState({
           determinism: val
       })
   }
 
     handleChangeBloating = (val) => () => {
-    console.log(val)
+    //console.log(val)
       this.setState({
-          bloating: val
+          bloatingMethod: val
       })
   }
 
@@ -161,11 +160,11 @@ export class EdgeComponent extends React.Component {
             style={{ width: 200 }}
             placeholder="Select a Method"
             optionFilterProp="children"
-            defaultValue="Global"
+            defaultValue="GLOBAL"
             filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
             onChange = {this.handleChangeBloating}
                         >
-            <Select.Option value="Global">Global</Select.Option>
+            <Select.Option value="GLOBAL">Global</Select.Option>
             <Select.Option value="PW">PW</Select.Option>
         </Select>
         <label> Determinism </label>
@@ -224,7 +223,7 @@ export class EdgeComponent extends React.Component {
         <br/>
         <label>Guard: </label>
         <br/>
-        {this.state.guard.map((shareholder, idx) => (
+        {this.state.guards.map((shareholder, idx) => (
           <view>
             <Input
               style={{width:"10%",
@@ -271,11 +270,11 @@ export class VariableComponent extends React.Component {
     super(props);
     this.state = {
       name: '',
-      shareholders: [{ name: '' }],
+      variables: [{ name: '' }],
       initialLeft: [{name: ''}],
       initialRight: [{name: ''}],
-      unsafe: '',
-      time: '',
+      unsafeSet: '',
+      timeHorizon: '',
     };
     getVariableState = getVariableState.bind(this)
     updateVariableCompo = updateVariableCompo.bind(this)
@@ -284,12 +283,12 @@ export class VariableComponent extends React.Component {
 
 
   handleShareholderNameChange = (idx) => (evt) => {
-    const newShareholders = this.state.shareholders.map((shareholder, sidx) => {
+    const newShareholders = this.state.variables.map((shareholder, sidx) => {
       if (idx !== sidx) return shareholder;
       return { ...shareholder, name: evt.target.value };
     });
 
-    this.setState({ shareholders: newShareholders });
+    this.setState({ variables: newShareholders });
   }
 
   handleLeftNameChange = (idx) => (evt) => {
@@ -311,13 +310,13 @@ export class VariableComponent extends React.Component {
   }
 
   handleSubmit = (evt) => {
-    const { name, shareholders } = this.state;
-    alert(`Incorporated: ${name} with ${shareholders.length} shareholders`);
+    const { name, variables } = this.state;
+    alert(`Incorporated: ${name} with ${variables.length} shareholders`);
   }
 
   handleAddShareholder = () => {
     this.setState({
-      shareholders: this.state.shareholders.concat([{ name: '' }]),
+      variables: this.state.variables.concat([{ name: '' }]),
       initialLeft: this.state.initialLeft.concat([{ name: '' }]),
       initialRight: this.state.initialRight.concat([{ name: '' }]),
       
@@ -326,7 +325,7 @@ export class VariableComponent extends React.Component {
 
   handleRemoveShareholder = (idx) => () => {
     this.setState({
-      shareholders: this.state.shareholders.filter((s, sidx) => idx !== sidx),
+      variables: this.state.variables.filter((s, sidx) => idx !== sidx),
       initialLeft: this.state.initialLeft.filter((s, sidx) => idx !== sidx),
       initialRight: this.state.initialRight.filter((s, sidx) => idx !== sidx)
 
@@ -342,7 +341,7 @@ export class VariableComponent extends React.Component {
         </label>
         <Button type="button" onClick={this.handleAddShareholder} className="small">Add Variable</Button>
         <br/>
-        {this.state.shareholders.map((shareholder, idx) => (
+        {this.state.variables.map((shareholder, idx) => (
           <view >
             <Input
               style={{width:"10%",
@@ -362,7 +361,7 @@ export class VariableComponent extends React.Component {
             Initial Set:
           </label>
         <br/>
-         {this.state.shareholders.map((shareholder, idx) => (
+         {this.state.variables.map((shareholder, idx) => (
           <view>
             <Input
               style={{width:"5.6%",
@@ -389,14 +388,14 @@ export class VariableComponent extends React.Component {
         <label>Unsafe Set </label>
         <br/>
          <Input placeholder="Unsafe Set" 
-            value={this.state.unsafe}
+            value={this.state.unsafeSet}
             style={{ width: "12%"}}
         />
         <br/>
         <label>Time Horizon </label>
         <br/>
         <InputNumber placeholder="TimeHorizon" 
-           value={this.state.time}
+           value={this.state.timeHorizon}
            style={{ width: "12%"}}
         />
         
@@ -427,9 +426,9 @@ function updateVariableCompo(text) {
         })
 
         this.setState({ 
-        shareholders: newVariable,
-        unsafe: dict["unsafeSet"],
-        time: dict["timeHorizon"],
+        variables: newVariable,
+        unsafeSet: dict["unsafeSet"],
+        timeHorizon: dict["timeHorizon"],
         initialLeft: newLeft,
         initialRight: newRight
          })
@@ -470,7 +469,7 @@ function updateEdgeCompo(text) {
             this.setState({ 
             vertex: newVertex,
             edge: newEdge,
-            guard: newGuard,
+            guards: newGuard,
             reset: newReset
          });
         }   
@@ -479,13 +478,13 @@ function updateEdgeCompo(text) {
             this.setState({ 
             vertex: newVertex,
             edge: newEdge,
-            guard: newGuard,
+            guards: newGuard,
             reset: dict["edge"].map((eachEdge, sidx) => {
                 return { name: "" };
         })
          })
         }
-        console.log(this.state)
+        //console.log(this.state)
 
     }
     
@@ -544,6 +543,66 @@ function saveFile(){
     var variable = getVariableState()
     //console.log(typeof(variable))
     var json = Object.assign({},edge, variable);
+    var formatChange = Object.keys(json).map(function(key) {
+      if (key=="vertex")
+      {
+        var vertex = json["vertex"].map((oneVertex, idx)=> {
+          return oneVertex.name
+        })
+        json["vertex"] = vertex
+      }
+
+      if (key=="edge")
+      {
+        var edge = json["edge"].map((oneVertex, idx)=> {
+          return oneVertex.name.split(",")
+        })
+        json["edge"] = edge
+      }
+
+      if (key=="guards")
+      {
+        var guard = json["guards"].map((oneVertex, idx)=> {
+          return oneVertex.name
+        })
+        json["guards"] = guard
+      }
+
+      if (key=="reset")
+      {
+        var reset = json["reset"].map((oneVertex, idx)=> {
+          return oneVertex.name
+        })
+        json["reset"] = reset
+      }
+
+      if (key=="variables")
+      {
+        var variable = json["variables"].map((oneVertex, idx)=> {
+          return oneVertex.name
+        })
+        json["variables"] = variable
+      }
+
+      if (key=="determinism")
+      {
+        if(json["determinism"]=="Deterministic")
+        json["determinism"] = true
+        else
+        json["determinism"] = false
+      }
+      
+      if (key=="initialLeft")
+      {
+        var eachLeft = json["initialLeft"].map((oneVertex, idx)=> {
+          return [oneVertex.name, json["initialRight"][idx].name]
+        })
+        json["initialSet"] = eachLeft
+        delete json["initialLeft"]
+        delete json["initialRight"]
+      }
+
+    });
     var json = JSON.stringify(json, null, 5)
     var blob = new Blob([json], {type: "text/plain;charset=utf-8"});
     File.saveAs(blob, "data.json");
@@ -557,13 +616,13 @@ export class DownloadJson extends React.Component {
       Determinism: '',
       vertex: [{ name: '' }],
       edge: [{name: ''}],
-      guard: [{name: ''}],
+      guards: [{name: ''}],
       reset: [{name: ''}],
       variable: [{name: ''}],
       initialLeft: [{name: ''}],
       initialRight: [{name: ''}],
-      unsafe: '',
-      time: '',
+      unsafeSet: '',
+      timeHorizon: '',
     };
     
   }

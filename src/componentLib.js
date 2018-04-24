@@ -278,6 +278,7 @@ export class VariableComponent extends React.Component {
       initialRight: [{name: ''}],
       unsafeSet: '',
       timeHorizon: '',
+      directory: 'examples/cars'
     };
     getVariableState = getVariableState.bind(this)
     updateVariableCompo = updateVariableCompo.bind(this)
@@ -433,7 +434,7 @@ function updateVariableCompo(text) {
         unsafeSet: dict["unsafeSet"],
         timeHorizon: dict["timeHorizon"],
         initialLeft: newLeft,
-        initialRight: newRight
+        initialRight: newRight,
          })
         //console.log(this.state)
 

@@ -4,6 +4,8 @@ import Graph from "react-graph-vis";
 import randomColor from "randomcolor"
 import React from 'react';
 import File from 'file-saver';
+import io from 'socket.io-client'
+import axios from 'axios';
 
 export class EdgeComponent extends React.Component {
   constructor(props) {
@@ -21,6 +23,7 @@ export class EdgeComponent extends React.Component {
     this.creategraph = this.creategraph.bind(this)
     this.createoptions = this.createoptions.bind(this)
     this.createevents = this.createevents.bind(this)
+    generateRemoteJson = generateRemoteJson.bind(this)
     saveFile = saveFile.bind(this)
   }
 
@@ -549,13 +552,13 @@ function saveFile(){
         var vertex = json["vertex"].map((oneVertex, idx)=> {
           return oneVertex.name
         })
-        json["vertex"] = vertex
+        json["vertex"] =vertex
       }
 
       if (key=="edge")
       {
         var edge = json["edge"].map((oneVertex, idx)=> {
-          return oneVertex.name.split(",")
+          return oneVertex.name.split(",").map(Number)
         })
         json["edge"] = edge
       }
@@ -608,6 +611,76 @@ function saveFile(){
     File.saveAs(blob, "data.json");
 }
 
+function generateRemoteJson(){
+    var edge = this.state
+    var variable = getVariableState()
+    //console.log(typeof(variable))
+    var json = Object.assign({},edge, variable);
+    var formatChange = Object.keys(json).map(function(key) {
+      if (key=="vertex")
+      {
+        var vertex = json["vertex"].map((oneVertex, idx)=> {
+          return oneVertex.name
+        })
+        json["vertex"] =vertex
+      }
+
+      if (key=="edge")
+      {
+        var edge = json["edge"].map((oneVertex, idx)=> {
+          return oneVertex.name.split(",").map(Number)
+        })
+        json["edge"] = edge
+      }
+
+      if (key=="guards")
+      {
+        var guard = json["guards"].map((oneVertex, idx)=> {
+          return oneVertex.name
+        })
+        json["guards"] = guard
+      }
+
+      if (key=="reset")
+      {
+        var reset = json["reset"].map((oneVertex, idx)=> {
+          return oneVertex.name
+        })
+        json["reset"] = reset
+      }
+
+      if (key=="variables")
+      {
+        var variable = json["variables"].map((oneVertex, idx)=> {
+          return oneVertex.name
+        })
+        json["variables"] = variable
+      }
+
+      if (key=="determinism")
+      {
+        if(json["determinism"]=="Deterministic")
+        json["determinism"] = true
+        else
+        json["determinism"] = false
+      }
+      
+      if (key=="initialLeft")
+      {
+        var eachLeft = json["initialLeft"].map((oneVertex, idx)=> {
+          return [oneVertex.name, json["initialRight"][idx].name]
+        })
+        json["initialSet"] = eachLeft
+        delete json["initialLeft"]
+        delete json["initialRight"]
+      }
+
+    });
+    var json = JSON.stringify(json, null, 5)
+    return json
+}
+
+
 export class DownloadJson extends React.Component {
     constructor(props) {
     super(props);
@@ -636,7 +709,7 @@ export class DownloadJson extends React.Component {
   
 }
 
-export class uploadPython extends React.Component {
+export class UploadPython extends React.Component {
     render()
     {
         const props = {
@@ -656,15 +729,68 @@ export class uploadPython extends React.Component {
         },
         };
         return(
+          <div>
+            <label>Upload Model</label>
+            <br/>
             <Upload {...props}>
                 <Button
                 style = {{width: 600,
                         height: 50
                 }}
                 >
-                <Icon type="upload" /> Click to Upload Your Json File
+                <Icon type="upload" /> Click to Upload Your Python Model
                 </Button>
             </Upload>
+          </div>
             )
     }
+}
+
+export class Verify extends React.Component {
+	constructor(props) {
+		super(props)
+		this.state = {
+			output:"",
+			verifyHash:"",
+      jsonContent:"",
+		}
+		this.handleVerify = this.handleVerify.bind(this)
+	}
+
+	componentDidMount(){
+		const socket = io('ws://localhost:8080')
+		socket.on('foo', function(data){
+			if(data.verifyHash == this.state.verifyHash){
+				this.setState({
+					output:data.output
+				})
+			}
+		}.bind(this))
+
+	}
+
+	handleVerify(){
+    var json = generateRemoteJson()
+		const hash = Math.random().toString()
+		this.setState({
+			verifyHash:hash
+		})
+    //console.log(json)
+
+		axios.post(`http://localhost:8080/api/verify`, { verifyHash:hash, jsonContent: json })
+		.then(res => {
+			//console.log(res[bod]);
+	    })
+
+	}
+
+	render(){
+		return (
+			<div>
+				This is verify component
+				<Button onClick={this.handleVerify}> Verify </Button>
+				{this.state.output}
+			</div>
+		)
+	}
 }

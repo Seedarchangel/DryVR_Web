@@ -29,6 +29,8 @@ app.post('/api/verify', function(req, res) {
 	// the json input will be send here
 	// the info will be stored in req.body
 	// parse the req.body and construct the input file for dryvr
+    console.log(req.body.jsonContent)
+    
 
 	var spawn = require('child_process').spawn;
 

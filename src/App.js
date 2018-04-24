@@ -1,8 +1,7 @@
 import 'antd/dist/antd.css';
 import React, { Component } from 'react';
 import { Select } from 'antd';
-import {VariableComponent, EdgeComponent, UploadJson} from "./componentLib"
-import Verify from "./verify"
+import {VariableComponent, EdgeComponent, UploadJson, UploadPython, Verify} from "./componentLib"
 
 class App extends Component {
 
@@ -22,6 +21,8 @@ class App extends Component {
     </div>
 <div>
 <UploadJson></UploadJson>
+<br/>
+<UploadPython></UploadPython>
 </div>
       <Verify />
       </div>

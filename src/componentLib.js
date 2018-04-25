@@ -1,6 +1,7 @@
 import 'antd/dist/antd.css';
 import { message, Upload, Button, Icon ,Input, InputNumber, Select} from 'antd';
 import Graph from "react-graph-vis";
+import Console from "react-console-component"
 import randomColor from "randomcolor"
 import React from 'react';
 import File from 'file-saver';
@@ -25,6 +26,7 @@ export class EdgeComponent extends React.Component {
     this.createevents = this.createevents.bind(this)
     generateRemoteJson = generateRemoteJson.bind(this)
     saveFile = saveFile.bind(this)
+    getBloatingStatus = getBloatingStatus.bind(this)
   }
 
   creategraph(){
@@ -113,7 +115,7 @@ export class EdgeComponent extends React.Component {
   handleAddEdge = () => {
     this.setState({
       edge: this.state.edge.concat([{ name: '' }]),
-      guards: this.state.guard.concat([{ name: '' }]),
+      guards: this.state.guards.concat([{ name: '' }]),
       reset: this.state.reset.concat([{ name: '' }])
     });
   }
@@ -127,7 +129,7 @@ export class EdgeComponent extends React.Component {
   handleRemoveEdge = (idx) => () => {
     this.setState({
       edge: this.state.edge.filter((s, sidx) => idx !== sidx),
-      guards: this.state.guard.filter((s, sidx) => idx !== sidx),
+      guards: this.state.guards.filter((s, sidx) => idx !== sidx),
       reset: this.state.reset.filter((s, sidx) => idx !== sidx),
     });
   }
@@ -139,16 +141,27 @@ export class EdgeComponent extends React.Component {
   }
 
   handleChangeDeterminism = (val) => () => {
-      //console.log(val)
+      console.log(val)
+      console.log(this.state.determinism)
+      if (this.state.determinism == "Deterministic")
       this.setState({
-          determinism: val
+          determinism: "Non-Deterministic"
+      })
+      else
+      this.setState({
+          determinism: "Deterministic"
       })
   }
 
     handleChangeBloating = (val) => () => {
     //console.log(val)
+      if (this.state.bloatingMethod == "GLOBAL")
       this.setState({
-          bloatingMethod: val
+          bloatingMethod: "PW"
+      })
+      else
+      this.setState({
+          bloatingMethod: "GLOBAL"
       })
   }
 
@@ -165,7 +178,7 @@ export class EdgeComponent extends React.Component {
             optionFilterProp="children"
             defaultValue="GLOBAL"
             filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
-            onChange = {this.handleChangeBloating}
+            onChange = {this.handleChangeBloating()}
                         >
             <Select.Option value="GLOBAL">Global</Select.Option>
             <Select.Option value="PW">PW</Select.Option>
@@ -178,7 +191,7 @@ export class EdgeComponent extends React.Component {
             optionFilterProp="children"
             defaultValue="Deterministic"
             filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
-            onChange = {this.handleChangeDeterminism}
+            onChange = {this.handleChangeDeterminism()}
         >
         <Select.Option value="Deterministic">Deterministic</Select.Option>
         <Select.Option value="Non-Deterministic">Non-Deterministic</Select.Option>
@@ -266,7 +279,10 @@ export class EdgeComponent extends React.Component {
   }
 }
 
-
+function getBloatingStatus()
+{
+  return this.state.bloatingMethod
+}
 
 export class VariableComponent extends React.Component {
   constructor(props) {
@@ -276,6 +292,7 @@ export class VariableComponent extends React.Component {
       variables: [{ name: '' }],
       initialLeft: [{name: ''}],
       initialRight: [{name: ''}],
+      kvalue: [{name: ''}],
       unsafeSet: '',
       timeHorizon: '',
       directory: 'examples/cars'
@@ -284,6 +301,7 @@ export class VariableComponent extends React.Component {
     updateVariableCompo = updateVariableCompo.bind(this)
     saveFile = saveFile.bind(this)
   }
+
 
 
   handleShareholderNameChange = (idx) => (evt) => {
@@ -302,6 +320,16 @@ export class VariableComponent extends React.Component {
     });
 
     this.setState({ initialLeft: newShareholders });
+  }
+
+  handleKvalue = (idx) => (evt) => {
+    const newShareholders = this.state.kvalue.map((shareholder, sidx) => {
+      if (idx !== sidx) return shareholder;
+      return { ...shareholder, name: evt.target.value };
+    });
+
+    this.setState({ kvalue: newShareholders });
+    
   }
 
   handleRightNameChange = (idx) => (evt) => {
@@ -323,6 +351,7 @@ export class VariableComponent extends React.Component {
       variables: this.state.variables.concat([{ name: '' }]),
       initialLeft: this.state.initialLeft.concat([{ name: '' }]),
       initialRight: this.state.initialRight.concat([{ name: '' }]),
+      kvalue: this.state.kvalue.concat([{ name: '' }]),
       
     });
   }
@@ -331,9 +360,11 @@ export class VariableComponent extends React.Component {
     this.setState({
       variables: this.state.variables.filter((s, sidx) => idx !== sidx),
       initialLeft: this.state.initialLeft.filter((s, sidx) => idx !== sidx),
-      initialRight: this.state.initialRight.filter((s, sidx) => idx !== sidx)
+      initialRight: this.state.initialRight.filter((s, sidx) => idx !== sidx),
+      kvalue: this.state.kvalue.filter((s, sidx) => idx !== sidx)
 
     });
+
   }
 
   render() {
@@ -385,6 +416,24 @@ export class VariableComponent extends React.Component {
               onChange={this.handleRightNameChange(idx)}
             />
 
+            {"   "}
+          </view>
+        ))}
+        <br/>
+        Kvalue
+        <br/>
+        {this.state.kvalue.map((shareholder, idx) => (
+          <view>
+            <Input
+              style={{width:"10%",
+              }}
+              type="text"
+              value={this.state.kvalue[idx].name}
+              onChange={this.handleKvalue(idx)}
+            />
+            <Button type="button" onClick={this.handleRemoveShareholder(idx)} className="small">
+              <Icon type="delete"/>
+            </Button>
             {"   "}
           </view>
         ))}
@@ -794,8 +843,10 @@ export class Verify extends React.Component {
 	render(){
 		return (
 			<div>
-				This is verify component
+				Verify
+        <br/>
 				<Button onClick={this.handleVerify}> Verify </Button>
+        <Console ref="console"/>
 				{this.state.output}
 			</div>
 		)

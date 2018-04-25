@@ -43,13 +43,13 @@ app.post('/api/verify', function(req, res) {
         var prc = spawn('python',  ['./DryVR_0.2/main.py', './DryVR_0.2/input/webinput/data'+hash+'.json']);
         
         prc.stdout.on('data', (data) => {
-        io.sockets.emit("foo", {verifyHash:req.body.verifyHash, output: JSON.stringify(data)});
+        io.sockets.emit("foo", {verifyHash:req.body.verifyHash, output: data.toString('utf8')});
         //console.log(`stdout: ${data}`);  
         console.log(typeof(data)) 
     });
 
         prc.stderr.on('data', (data) => {
-        io.sockets.emit("foo", {verifyHash:req.body.verifyHash, output: JSON.stringify(data)})
+        io.sockets.emit("foo", {verifyHash:req.body.verifyHash, output: data.toString('utf8')})
         //console.log(`stderr: ${data}`);
         console.log(typeof(data)) 
        });

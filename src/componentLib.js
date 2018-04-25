@@ -11,7 +11,7 @@ export class EdgeComponent extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-            bloatingMethod: 'Global',
+            bloatingMethod: 'GLOBAL',
             determinism: 'Deterministic',
             vertex: [{ name: ''}],
             edge: [{ name: '' }],
@@ -599,9 +599,12 @@ function saveFile(){
       if (key=="initialLeft")
       {
         var eachLeft = json["initialLeft"].map((oneVertex, idx)=> {
-          return [oneVertex.name, json["initialRight"][idx].name]
+          return oneVertex.name
         })
-        json["initialSet"] = eachLeft
+        var eachRight = json["initialRight"].map((oneVertex, idx)=> {
+          return oneVertex.name
+        })
+        json["initialSet"] = [eachLeft,eachRight]
         delete json["initialLeft"]
         delete json["initialRight"]
       }
@@ -669,9 +672,12 @@ function generateRemoteJson(){
       if (key=="initialLeft")
       {
         var eachLeft = json["initialLeft"].map((oneVertex, idx)=> {
-          return [oneVertex.name, json["initialRight"][idx].name]
+          return oneVertex.name
         })
-        json["initialSet"] = eachLeft
+        var eachRight = json["initialRight"].map((oneVertex, idx)=> {
+          return oneVertex.name
+        })
+        json["initialSet"] = [eachLeft,eachRight]
         delete json["initialLeft"]
         delete json["initialRight"]
       }

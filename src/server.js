@@ -36,18 +36,22 @@ app.post('/api/verify', function(req, res) {
     const hash = Math.random().toString()
     fs.writeFile('./DryVR_0.2/input/webinput/data'+hash+'.json', file, 'utf8', function readFileCallback(err, data){
     if (err){
+        io.sockets.emit({verifyHash:req.body.verifyHash, output:err})
         console.log(err);
     } else {
         console.log("Success!")
         var prc = spawn('python',  ['./DryVR_0.2/main.py', './DryVR_0.2/input/webinput/data'+hash+'.json']);
         
         prc.stdout.on('data', (data) => {
-        io.sockets.emit("dryvrret", data);
-        console.log(`stdout: ${data}`);   
+        io.sockets.emit("foo", {verifyHash:req.body.verifyHash, output: JSON.stringify(data)});
+        //console.log(`stdout: ${data}`);  
+        console.log(typeof(data)) 
     });
 
         prc.stderr.on('data', (data) => {
-        console.log(`stderr: ${data}`);
+        io.sockets.emit("foo", {verifyHash:req.body.verifyHash, output: JSON.stringify(data)})
+        //console.log(`stderr: ${data}`);
+        console.log(typeof(data)) 
        });
 
         prc.on('close', (code) => {
@@ -72,11 +76,12 @@ app.post('/api/verify', function(req, res) {
     // prc.on('close', (code) => {
     //   console.log(`child process exited with code ${code}`);
     // });
-    ret = {
+    /*ret = {
+
         verifyHash:req.body.verifyHash,
         output:"output from socketIO"
     }
-    io.sockets.emit("foo", ret);
+    io.sockets.emit("foo", ret);*/
 	res.send("I got the json file wow")
 
 })

@@ -39,19 +39,28 @@ app.post('/api/verify', function(req, res) {
         io.sockets.emit({verifyHash:req.body.verifyHash, output:err})
         console.log(err);
     } else {
-        console.log("Success!")
+        //console.log("Success!")
         var prc = spawn('python',  ['./DryVR_0.2/main.py', './DryVR_0.2/input/webinput/data'+hash+'.json']);
-        
+    
         prc.stdout.on('data', (data) => {
-        io.sockets.emit("foo", {verifyHash:req.body.verifyHash, output: data.toString('utf8')});
+        var str = data.toString('utf8'), lines = str.split(/(\r?\n)/g)
+        var lineByLine = ""
+        for (var i=0; i<lines.length; i++) {
+            lineByLine = lineByLine+lines[i]+"\n"
+        }
+        console.log(lineByLine)
+        //for (var i=0; i<lines.length; i++) {
+        io.sockets.emit("foo", {verifyHash:req.body.verifyHash, output: lineByLine+"\n"});
         //console.log(`stdout: ${data}`);  
-        console.log(typeof(data)) 
+        //console.log(typeof(data)) 
+        //}
+
     });
 
         prc.stderr.on('data', (data) => {
-        io.sockets.emit("foo", {verifyHash:req.body.verifyHash, output: data.toString('utf8')})
-        //console.log(`stderr: ${data}`);
-        console.log(typeof(data)) 
+        io.sockets.emit("foo", {verifyHash:req.body.verifyHash, output: data.toString('utf8')+"\n"})
+        console.log(`stderr: ${data}`);
+        //console.log(typeof(data)) 
        });
 
         prc.on('close', (code) => {

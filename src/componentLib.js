@@ -835,20 +835,37 @@ export class Verify extends React.Component {
 
 		axios.post(`http://localhost:8080/api/verify`, { verifyHash:hash, jsonContent: json })
 		.then(res => {
-			//console.log(res[bod]);
+			//console.log(res);
 	    })
 
 	}
 
 	render(){
+    console.log(this.state.output)
 		return (
 			<div>
 				Verify
         <br/>
 				<Button onClick={this.handleVerify}> Verify </Button>
-        <Console ref="console"/>
+        <Console ref="console"
+        handler={this.state.output}
+        />
 				{this.state.output}
 			</div>
 		)
 	}
 }
+
+/*export class EchoConsole extends React.Component{
+  echo(text) {
+    this.refs.console.log(text);
+    this.refs.console.return();
+  }
+  render(){
+    return (<Console ref="console"
+            handler={this.echo}
+            autofocus={true}
+            />
+            )
+  }
+}*/

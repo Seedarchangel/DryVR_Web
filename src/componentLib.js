@@ -824,6 +824,7 @@ export class Verify extends React.Component {
 		socket.on('foo', function(data){
 			if(data.verifyHash == this.state.verifyHash){
 				this.setState({
+          loading:false,
 					output:data.output
 				})
 			}
@@ -863,11 +864,13 @@ export class Verify extends React.Component {
 				Verify
 
         <br/>
+        <Spin spinning={this.state.loading}>
 				<Button onClick={this.handleVerify}> Verify </Button>
         <Console ref="console"
         handler={this.state.output}
         />
 				{this.state.output}
+        </Spin>
 			</div>
 		)
 	}

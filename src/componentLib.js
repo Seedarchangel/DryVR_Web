@@ -1,5 +1,5 @@
 import 'antd/dist/antd.css';
-import { message, Upload, Button, Icon ,Input, InputNumber, Select} from 'antd';
+import { message, Upload, Button, Icon ,Input, InputNumber, Select, Spin} from 'antd';
 import Graph from "react-graph-vis";
 import Console from "react-console-component"
 import randomColor from "randomcolor"
@@ -770,6 +770,7 @@ export class UploadPython extends React.Component {
     {
         const props = {
         name: 'file',
+        accept: ".py,text/directory",
         action: '//jsonplaceholder.typicode.com/posts/',
         headers: {
             authorization: 'authorization-text',
@@ -779,6 +780,7 @@ export class UploadPython extends React.Component {
             }
             if (info.file.status === 'done') {
             message.success(`${info.file.name} file uploaded successfully`);
+            insertBlob(info.file.originFileObj, info.file.name)
             } else if (info.file.status === 'error') {
             message.error(`${info.file.name} file upload failed.`);
             }
@@ -806,11 +808,15 @@ export class Verify extends React.Component {
 	constructor(props) {
 		super(props)
 		this.state = {
+      loading: false,
 			output:"",
 			verifyHash:"",
       jsonContent:"",
+      pythonBlob:"",
+      pyModelName:""
 		}
 		this.handleVerify = this.handleVerify.bind(this)
+    insertBlob = insertBlob.bind(this)
 	}
 
 	componentDidMount(){
@@ -828,15 +834,25 @@ export class Verify extends React.Component {
 	handleVerify(){
     var json = generateRemoteJson()
 		const hash = Math.random().toString()
-		this.setState({
+    if (this.state.pyModelName.trim() == "")
+    {
+      message.error("You must upload a python model")
+    }
+
+    else{
+      this.setState({
+      loading: true,
 			verifyHash:hash
 		})
     //console.log(json)
-
-		axios.post(`http://localhost:8080/api/verify`, { verifyHash:hash, jsonContent: json })
+		axios.post(`http://localhost:8080/api/verify`, { verifyHash:hash, jsonContent: json, pythonBlob: this.state.pythonBlob,
+    pyModelName: this.pyModelName
+   })
 		.then(res => {
 			//console.log(res);
 	    })
+    }
+
 
 	}
 
@@ -845,6 +861,7 @@ export class Verify extends React.Component {
 		return (
 			<div>
 				Verify
+
         <br/>
 				<Button onClick={this.handleVerify}> Verify </Button>
         <Console ref="console"
@@ -854,6 +871,25 @@ export class Verify extends React.Component {
 			</div>
 		)
 	}
+}
+
+function insertBlob(blob, name) {
+  {
+    const reader = new FileReader();
+    reader.onload = e => {
+        var text = reader.result
+        this.setState({ 
+        pythonBlob: text,
+        pyModelName: name,
+         })
+        //console.log(this.state)
+
+    }
+    
+    reader.readAsText(blob)
+    
+}
+  
 }
 
 /*export class EchoConsole extends React.Component{
